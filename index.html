@@ -2,9 +2,10 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
   <title>Yourfoto - Wedding Moment</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font Elegan untuk Nuansa Mewah -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   
   <style>
@@ -25,17 +26,13 @@
   </style>
 </head>
 
-<!-- GANTI URL FOTO DI BAWAH INI DENGAN FOTO PREWED ASLI -->
 <body class="flex flex-col items-center justify-center min-h-screen p-4 relative" 
       style="background-image: url('https://images.unsplash.com/photo-1511285560929-80b456fea0bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'); background-size: cover; background-position: center;">
   
-  <!-- Overlay Gelap Tipis agar teks tetap terbaca -->
   <div class="absolute inset-0 bg-black/40 z-0"></div>
 
-  <!-- Panel Glassmorphism Mewah -->
-  <div class="relative z-10 bg-white/20 backdrop-blur-md border border-white/30 p-8 rounded-3xl shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] w-full max-w-sm text-center fade-in">
+  <div class="relative z-10 bg-white/20 backdrop-blur-md border border-white/30 p-6 sm:p-8 rounded-3xl shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] w-full max-w-sm text-center fade-in">
     
-    <!-- Ornamen Atas -->
     <div class="flex justify-center mb-4 opacity-80">
       <svg width="40" height="20" viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M20 0L22.5 10L40 10L25 15L30 25L20 18L10 25L15 15L0 10L17.5 10L20 0Z" fill="#D4AF37"/>
@@ -45,7 +42,6 @@
     <h1 class="text-3xl font-serif-elegant text-white mb-2 drop-shadow-md">Abadikan Momen</h1>
     <p class="text-gray-100 mb-8 text-sm font-light tracking-wide">Jadilah bagian dari hari bahagia kami.</p>
 
-    <!-- LAYAR 1: Input Nama -->
     <div id="name-section" class="mb-2">
       <input type="text" id="guest-name-input" placeholder="Nama Anda (Cth: Budi & Pasangan)" class="w-full bg-white/60 backdrop-blur-sm border border-white/50 rounded-xl px-4 py-3 mb-5 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:bg-white/90 text-center text-gray-800 placeholder-gray-600 transition shadow-inner font-medium">
       
@@ -54,56 +50,50 @@
       </button>
     </div>
 
-    <!-- LAYAR 2: Area Kamera -->
     <div id="camera-section" class="hidden flex-col items-center">
       <div class="mb-4 w-full">
         <p class="text-gray-100 font-light">Selamat datang,</p>
         <p class="font-serif-elegant text-2xl text-[#FCF6BA] drop-shadow-sm" id="display-name"></p>
       </div>
 
-      <div class="mb-6 p-4 bg-black/20 rounded-2xl border border-white/10 w-full">
-        <span class="text-6xl font-serif-elegant text-white drop-shadow-lg" id="quota-display">10</span>
+      <div class="mb-8 p-4 bg-black/20 rounded-2xl border border-white/10 w-full">
+        <span class="text-6xl font-serif-elegant text-white drop-shadow-lg" id="quota-display">5</span>
         <p class="text-gray-200 text-xs tracking-widest uppercase mt-2 opacity-80">Sisa Kuota Foto</p>
       </div>
 
       <input type="file" accept="image/*" capture="environment" id="camera-input" class="hidden" onchange="handlePhoto(event)">
       
-      <label for="camera-input" id="camera-btn" class="bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-gray-900 font-bold py-3 px-6 rounded-full cursor-pointer hover:shadow-[0_0_20px_rgba(212,175,55,0.7)] transition duration-300 w-full block mb-2">
+      <label for="camera-input" id="camera-btn" class="bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-gray-900 font-bold py-3 px-6 rounded-full cursor-pointer hover:shadow-[0_0_20px_rgba(212,175,55,0.7)] transition duration-300 w-full block">
         📸 Buka Kamera
       </label>
 
-      <!-- Indikator Status -->
-      <div id="status-container" class="mt-3 hidden w-full">
-        <div class="flex justify-center items-center gap-2">
+      <div id="status-container" class="mt-5 hidden w-full">
+        <div class="flex justify-center items-center gap-2" id="loading-indicator">
           <svg class="animate-spin h-4 w-4 text-[#FCF6BA]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="loading-spinner">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
           <p id="status-text" class="text-sm font-medium text-[#FCF6BA] tracking-wide">Menyimpan memori emas...</p>
         </div>
+        <p id="final-message" class="text-sm font-medium text-white tracking-wide leading-relaxed hidden mt-2"></p>
       </div>
-
-      <!-- Preview Layar: Tampil setelah foto diambil -->
+      
       <div id="preview-container" class="mt-4 hidden w-full fade-in">
         <p class="text-[10px] text-white/70 mb-2 tracking-widest uppercase">Hasil Jepretan Terakhir</p>
         <div class="relative w-full h-40 rounded-xl overflow-hidden border border-white/30 shadow-lg">
           <img id="preview-img" class="w-full h-full object-cover" src="" alt="Preview">
-          <!-- Tombol Download -->
-          <a id="download-btn" href="" download="Yourfoto_Capture.jpg" class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-md text-white text-xs font-semibold py-2 px-4 rounded-full border border-white/40 hover:bg-black/80 transition flex items-center gap-1">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-            Simpan ke HP
-          </a>
         </div>
       </div>
-
+      
     </div>
     
-    <!-- Footer Kecil -->
     <p class="mt-8 text-[10px] text-white/50 tracking-widest uppercase">Powered by Fiks Fotograpy</p>
   </div>
 
   <script>
-    const MAX_PHOTOS = 10;
+    // Batas foto diubah menjadi 5
+    const MAX_PHOTOS = 5;
+    
     const nameSection = document.getElementById('name-section');
     const cameraSection = document.getElementById('camera-section');
     const nameInput = document.getElementById('guest-name-input');
@@ -111,14 +101,14 @@
     const quotaDisplay = document.getElementById('quota-display');
     const cameraInput = document.getElementById('camera-input');
     const cameraBtn = document.getElementById('camera-btn');
-    const statusContainer = document.getElementById('status-container');
-    const statusText = document.getElementById('status-text');
-    const loadingSpinner = document.getElementById('loading-spinner');
     
-    // Variabel untuk fitur preview
+    const statusContainer = document.getElementById('status-container');
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const statusText = document.getElementById('status-text');
+    const finalMessage = document.getElementById('final-message');
+    
     const previewContainer = document.getElementById('preview-container');
     const previewImg = document.getElementById('preview-img');
-    const downloadBtn = document.getElementById('download-btn');
 
     let guestName = localStorage.getItem('yourfoto_name') || "";
     let usedQuota = parseInt(localStorage.getItem('yourfoto_used')) || 0;
@@ -153,9 +143,11 @@
       if (remaining <= 0) {
         cameraBtn.classList.add('hidden');
         statusContainer.classList.remove('hidden');
-        loadingSpinner.classList.add('hidden'); // Sembunyikan ikon loading
-        statusText.classList.replace('text-[#FCF6BA]', 'text-green-300');
-        statusText.innerText = "Terima kasih! Kuota foto habis ✨";
+        loadingIndicator.classList.add('hidden'); // Sembunyikan spinner
+        
+        // Memunculkan pesan penutup hangat
+        finalMessage.classList.remove('hidden');
+        finalMessage.innerHTML = "Terima kasih telah ikut mengambil momen Hari Bahagia kami,<br>Foto terbaik kalian akan di posting di media sosial yaaa 🥰😁";
       }
     }
 
@@ -163,29 +155,23 @@
       const file = event.target.files[0];
       if (!file) return;
 
-      // Munculkan animasi loading
       cameraBtn.classList.add('hidden');
       statusContainer.classList.remove('hidden');
-      loadingSpinner.classList.remove('hidden');
-      statusText.classList.replace('text-green-300', 'text-[#FCF6BA]');
+      loadingIndicator.classList.remove('hidden');
       statusText.innerText = "Menyimpan memori emas...";
 
-      // Proses baca file dan kirim ke GAS
       const reader = new FileReader();
       reader.onload = function(e) {
         const dataURI = e.target.result;
         const fileName = guestName.replace(/\s+/g, '_') + '_' + Date.now() + '.jpg';
         
-        // --- 1. TAMPILKAN PREVIEW & SET LINK DOWNLOAD LOKAL ---
+        // Menampilkan preview saja, tanpa link download
         previewImg.src = dataURI;
-        downloadBtn.href = dataURI;
-        downloadBtn.download = fileName;
-        previewContainer.classList.remove('hidden'); 
-        
-        // --- 2. URL WEB APP GAS KAMU ---
+        previewContainer.classList.remove('hidden');
+
+        // URL GAS tetap milikmu
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxU69LYfJDlHFSayGphq3e4ik1L0wBSA5tbU_sRxDAKGOyR0g1BASRIDmI3oc9nO_QS/exec'; 
 
-        // --- 3. KIRIM DATA KE BACKEND ---
         fetch(SCRIPT_URL, {
           method: 'POST',
           redirect: 'follow',
@@ -214,7 +200,6 @@
         usedQuota++;
         localStorage.setItem('yourfoto_used', usedQuota);
         
-        loadingSpinner.classList.add('hidden');
         statusText.innerText = "Berhasil diabadikan! 🥂";
         
         setTimeout(() => {
