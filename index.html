@@ -141,18 +141,30 @@
     }
 
     function handlePhoto(event) {
+      // 1. BARIS INI YANG TADI HILANG
+      const file = event.target.files[0];
+      if (!file) return;
+
+      // 2. Munculkan animasi loading
+      cameraBtn.classList.add('hidden');
+      statusContainer.classList.remove('hidden');
+      loadingSpinner.classList.remove('hidden');
+      statusText.classList.replace('text-green-300', 'text-[#FCF6BA]');
+      statusText.innerText = "Menyimpan memori emas...";
+
+      // 3. Proses baca file dan kirim ke GAS
       const reader = new FileReader();
       reader.onload = function(e) {
         const dataURI = e.target.result;
         const fileName = guestName.replace(/\s+/g, '_') + '_' + Date.now() + '.jpg';
         
-        // GANTI DENGAN URL WEB APP GAS KAMU (HASIL NEW DEPLOYMENT)
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwiZ6RP1mAoHJsNz7D49kAUsvh77UN0P0e2hkYuyhXZxE_0ztJStCzP0Sr0EuZ_C-s/exec'; 
+        // MASUKKAN URL WEB APP GAS KAMU DI SINI
+        const SCRIPT_URL = 'https://script.google.com/macros/s/GANTI_DENGAN_URL_GAS_KAMU_YANG_ASLI/exec'; 
 
-        // Kirim data menggunakan Fetch API dengan Header teks agar lolos CORS
+        // Kirim data menggunakan Fetch API
         fetch(SCRIPT_URL, {
           method: 'POST',
-          redirect: 'follow', // Penting karena Google sering mengalihkan link (redirect)
+          redirect: 'follow',
           headers: {
             'Content-Type': 'text/plain;charset=utf-8', 
           },
@@ -169,6 +181,8 @@
           onError(error);
         });
       }
+      
+      // Baris ini butuh variabel 'file' yang ada di nomor 1
       reader.readAsDataURL(file);
     }
 
