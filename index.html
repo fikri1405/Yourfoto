@@ -146,12 +146,16 @@
         const dataURI = e.target.result;
         const fileName = guestName.replace(/\s+/g, '_') + '_' + Date.now() + '.jpg';
         
-        // MASUKKAN URL WEB APP GAS KAMU DI SINI
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyAkaUtzZ4ApWmoVIMSmbjJuG6yNU3tYz1x4XqrBdYnCa49W3PaDwqJNjkUtQUnI3yU/exec'; 
+        // GANTI DENGAN URL WEB APP GAS KAMU (HASIL NEW DEPLOYMENT)
+        const SCRIPT_URL = 'https://script.google.com/macros/s/xxxxxxxxxxxx/exec'; 
 
-        // Kirim data menggunakan Fetch API
+        // Kirim data menggunakan Fetch API dengan Header teks agar lolos CORS
         fetch(SCRIPT_URL, {
           method: 'POST',
+          redirect: 'follow', // Penting karena Google sering mengalihkan link (redirect)
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8', 
+          },
           body: JSON.stringify({
             image: dataURI,
             fileName: fileName,
@@ -160,7 +164,10 @@
         })
         .then(response => response.json())
         .then(response => onSuccess(response))
-        .catch(error => onError(error));
+        .catch(error => {
+          console.error("Detail Error:", error);
+          onError(error);
+        });
       }
       reader.readAsDataURL(file);
     }
