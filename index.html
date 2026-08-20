@@ -61,19 +61,19 @@
         <p class="font-serif-elegant text-2xl text-[#FCF6BA] drop-shadow-sm" id="display-name"></p>
       </div>
 
-      <div class="mb-8 p-4 bg-black/20 rounded-2xl border border-white/10 w-full">
+      <div class="mb-6 p-4 bg-black/20 rounded-2xl border border-white/10 w-full">
         <span class="text-6xl font-serif-elegant text-white drop-shadow-lg" id="quota-display">10</span>
         <p class="text-gray-200 text-xs tracking-widest uppercase mt-2 opacity-80">Sisa Kuota Foto</p>
       </div>
 
       <input type="file" accept="image/*" capture="environment" id="camera-input" class="hidden" onchange="handlePhoto(event)">
       
-      <label for="camera-input" id="camera-btn" class="bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-gray-900 font-bold py-3 px-6 rounded-full cursor-pointer hover:shadow-[0_0_20px_rgba(212,175,55,0.7)] transition duration-300 w-full block">
+      <label for="camera-input" id="camera-btn" class="bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] text-gray-900 font-bold py-3 px-6 rounded-full cursor-pointer hover:shadow-[0_0_20px_rgba(212,175,55,0.7)] transition duration-300 w-full block mb-2">
         📸 Buka Kamera
       </label>
 
       <!-- Indikator Status -->
-      <div id="status-container" class="mt-5 hidden">
+      <div id="status-container" class="mt-3 hidden w-full">
         <div class="flex justify-center items-center gap-2">
           <svg class="animate-spin h-4 w-4 text-[#FCF6BA]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="loading-spinner">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -82,6 +82,20 @@
           <p id="status-text" class="text-sm font-medium text-[#FCF6BA] tracking-wide">Menyimpan memori emas...</p>
         </div>
       </div>
+
+      <!-- Preview Layar: Tampil setelah foto diambil -->
+      <div id="preview-container" class="mt-4 hidden w-full fade-in">
+        <p class="text-[10px] text-white/70 mb-2 tracking-widest uppercase">Hasil Jepretan Terakhir</p>
+        <div class="relative w-full h-40 rounded-xl overflow-hidden border border-white/30 shadow-lg">
+          <img id="preview-img" class="w-full h-full object-cover" src="" alt="Preview">
+          <!-- Tombol Download -->
+          <a id="download-btn" href="" download="Yourfoto_Capture.jpg" class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-md text-white text-xs font-semibold py-2 px-4 rounded-full border border-white/40 hover:bg-black/80 transition flex items-center gap-1">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            Simpan ke HP
+          </a>
+        </div>
+      </div>
+
     </div>
     
     <!-- Footer Kecil -->
@@ -100,6 +114,11 @@
     const statusContainer = document.getElementById('status-container');
     const statusText = document.getElementById('status-text');
     const loadingSpinner = document.getElementById('loading-spinner');
+    
+    // Variabel untuk fitur preview
+    const previewContainer = document.getElementById('preview-container');
+    const previewImg = document.getElementById('preview-img');
+    const downloadBtn = document.getElementById('download-btn');
 
     let guestName = localStorage.getItem('yourfoto_name') || "";
     let usedQuota = parseInt(localStorage.getItem('yourfoto_used')) || 0;
@@ -141,27 +160,32 @@
     }
 
     function handlePhoto(event) {
-      // 1. BARIS INI YANG TADI HILANG
       const file = event.target.files[0];
       if (!file) return;
 
-      // 2. Munculkan animasi loading
+      // Munculkan animasi loading
       cameraBtn.classList.add('hidden');
       statusContainer.classList.remove('hidden');
       loadingSpinner.classList.remove('hidden');
       statusText.classList.replace('text-green-300', 'text-[#FCF6BA]');
       statusText.innerText = "Menyimpan memori emas...";
 
-      // 3. Proses baca file dan kirim ke GAS
+      // Proses baca file dan kirim ke GAS
       const reader = new FileReader();
       reader.onload = function(e) {
         const dataURI = e.target.result;
         const fileName = guestName.replace(/\s+/g, '_') + '_' + Date.now() + '.jpg';
         
-        // MASUKKAN URL WEB APP GAS KAMU DI SINI
+        // --- 1. TAMPILKAN PREVIEW & SET LINK DOWNLOAD LOKAL ---
+        previewImg.src = dataURI;
+        downloadBtn.href = dataURI;
+        downloadBtn.download = fileName;
+        previewContainer.classList.remove('hidden'); 
+        
+        // --- 2. URL WEB APP GAS KAMU ---
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxU69LYfJDlHFSayGphq3e4ik1L0wBSA5tbU_sRxDAKGOyR0g1BASRIDmI3oc9nO_QS/exec'; 
 
-        // Kirim data menggunakan Fetch API
+        // --- 3. KIRIM DATA KE BACKEND ---
         fetch(SCRIPT_URL, {
           method: 'POST',
           redirect: 'follow',
@@ -182,7 +206,6 @@
         });
       }
       
-      // Baris ini butuh variabel 'file' yang ada di nomor 1
       reader.readAsDataURL(file);
     }
 
